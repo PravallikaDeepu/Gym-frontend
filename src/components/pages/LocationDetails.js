@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {locationDetailsSchema} from '../../schemas/schema';
-import {locationDetails} from '../../services/service'
+import { locationDetailsSchema } from "../../schemas/schema";
+import { locationDetails } from "../../services/service";
+import Header from "../layouts/Header";
 
 function LocationDetails() {
   const navigate = useNavigate();
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const [locationData, setLocationData] = useState({
     addressLine1: "",
@@ -15,9 +19,8 @@ function LocationDetails() {
     pincode: "",
     country: "India",
   });
-  
 
-
+  // ✅ HANDLE CHANGE
   function handleChange(e) {
     const { name, value } = e.target;
 
@@ -27,202 +30,199 @@ function LocationDetails() {
     }));
   }
 
+  // ✅ INPUT CLASS (red/green borders)
+  const getInputClass = (field) => {
+    return `w-full border rounded-lg p-3 focus:outline-none transition ${
+      errors[field]
+        ? "border-red-500 focus:ring-red-500"
+        : locationData[field]
+        ? "border-green-500 focus:ring-green-500"
+        : "border-gray-300 focus:ring-blue-500"
+    }`;
+  };
+
+  // ✅ SUBMIT
   async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log("Location Data:", locationData);
+    const result = locationDetailsSchema.safeParse(locationData);
 
- const result = locationDetailsSchema.safeParse(locationData);
-   
-     if (!result.success) {
-       console.log(result.error.format());
-       alert("Validation Failed");
-       return;
-     }
-   
-     try {
-       const out = await locationDetails(locationData);
-   
-   console.log(out.message, "GYM Registration ");
-       if(out.success){
-        navigate("/media/membership")
-        alert("Location Details Saved Succesfully😊")
-       }
-      
-     }
-       catch (err) {
-       console.log(err);
-     }  
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    setLoading(true);
+
+    try {
+      const out = await locationDetails(locationData);
+
+      if (out.success) {
+        navigate("/media/membership");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-white shadow-xl rounded-xl p-8">
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
-          Location Details
-        </h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <Header />
 
-        <form className="space-y-6">
-          <div>
-            <label className="block font-medium mb-2">
-              Address Line 1
-            </label>
-            <input
-              type="text"
-              name="addressLine1"
-              value={locationData.addressLine1}
-              onChange={handleChange}
-              placeholder="Enter Address"
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div className="flex justify-center mt-10 px-6">
+        <div className="w-full max-w-3xl bg-white shadow-xl rounded-xl p-8">
 
-          <div>
-            <label className="block font-medium mb-2">
-              Address Line 2
-            </label>
-            <input
-              type="text"
-              name="addressLine2"
-              value={locationData.addressLine2}
-              onChange={handleChange}
-              placeholder="Apartment, Building, Floor (Optional)"
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+            Location Details
+          </h1>
 
-          <div>
-            <label className="block font-medium mb-2">
-              Landmark
-            </label>
-            <input
-              type="text"
-              name="landmark"
-              value={locationData.landmark}
-              onChange={handleChange}
-              placeholder="Near..."
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* ADDRESS 1 */}
             <div>
               <label className="block font-medium mb-2">
-                City
+                Address Line 1
               </label>
               <input
                 type="text"
-                name="city"
-                value={locationData.city}
+                name="addressLine1"
+                value={locationData.addressLine1}
                 onChange={handleChange}
-                placeholder="Enter City"
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={getInputClass("addressLine1")}
               />
+              {errors.addressLine1 && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.addressLine1}
+                </p>
+              )}
             </div>
 
+            {/* ADDRESS 2 */}
             <div>
               <label className="block font-medium mb-2">
-                State
+                Address Line 2
               </label>
               <input
                 type="text"
-                name="state"
-                value={locationData.state}
+                name="addressLine2"
+                value={locationData.addressLine2}
                 onChange={handleChange}
-                placeholder="Enter State"
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={getInputClass("addressLine2")}
               />
+              {errors.addressLine2 && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.addressLine2}
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block font-medium mb-2">
-                Pincode
+                Landmark
               </label>
               <input
                 type="text"
-                name="pincode"
-                value={locationData.pincode}
+                name="landmark"
+                value={locationData.landmark}
                 onChange={handleChange}
-                placeholder="Enter Pincode"
-                maxLength={6}
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={getInputClass("landmark")}
               />
+              {errors.landmark && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.landmark}
+                </p>
+              )}
             </div>
 
-            <div>
-              <label className="block font-medium mb-2">
-                Country
-              </label>
-              <input
-                type="text"
-                name="country"
-                value={locationData.country}
-                readOnly
-                className="w-full border border-gray-300 rounded-lg p-3 bg-gray-100"
-              />
+            {/* CITY + STATE */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div>
+                <label className="block font-medium mb-2">City</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={locationData.city}
+                  onChange={handleChange}
+                  className={getInputClass("city")}
+                />
+                {errors.city && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.city}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block font-medium mb-2">State</label>
+                <input
+                  type="text"
+                  name="state"
+                  value={locationData.state}
+                  onChange={handleChange}
+                  className={getInputClass("state")}
+                />
+                {errors.state && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.state}
+                  </p>
+                )}
+              </div>
+
+              {/* PINCODE */}
+              <div>
+                <label className="block font-medium mb-2">
+                  Pincode
+                </label>
+                <input
+                  type="text"
+                  name="pincode"
+                  value={locationData.pincode}
+                  onChange={handleChange}
+                  className={getInputClass("pincode")}
+                />
+                {errors.pincode && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.pincode}
+                  </p>
+                )}
+              </div>
+
+              {/* COUNTRY */}
+              <div>
+                <label className="block font-medium mb-2">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  value={locationData.country}
+                  readOnly
+                  className="w-full border border-gray-300 rounded-lg p-3 bg-gray-100"
+                />
+              </div>
+
             </div>
 
-            <div className="space-y-6">
+            {/* BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-lg font-semibold text-white transition ${
+                loading
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {loading ? "Loading..." : "Save & Continue"}
+            </button>
 
-  {/* <div>
-    <label className="block font-medium mb-2">
-      Gym Logo
-    </label>
-
-    <input
-      type="file"
-      name="gymLogo"
-      accept="image/*"
-      onChange={handleFileChange}
-      className="w-full border border-gray-300 rounded-lg p-3"
-    />
-  </div>
-
-  <div>
-    <label className="block font-medium mb-2">
-      Cover Image
-    </label>
-
-    <input
-      type="file"
-      name="coverImage"
-      accept="image/*"
-      onChange={handleFileChange}
-      className="w-full border border-gray-300 rounded-lg p-3"
-    />
-  </div>
-
- 
-  <div>
-    <label className="block font-medium mb-2">
-      Gym Photos
-    </label>
-
-    <input
-      type="file"
-      name="gymPhotos"
-      accept="image/*"
-      multiple
-      onChange={handleFileChange}
-      className="w-full border border-gray-300 rounded-lg p-3"
-    />
-
-    <p className="text-sm text-gray-500 mt-1">
-      You can upload multiple gym photos.
-    </p>
-  </div> */}
-
-</div>
-          </div>
-
-          <button
-            type="submit"
-            onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-          >
-            Save & Continue
-          </button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

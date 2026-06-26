@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { registerSchema } from "../../schemas/schema";
 import { registerUser } from "../../services/service";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ function Register() {
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const [countryCode, setCountryCode] = useState("+91");
+const [loading, setLoading] = useState(false);
 
 function handleChange(e) {
   const { name, value } = e.target;
@@ -83,48 +87,52 @@ const getInputClass = (field) => {
   return "w-full border rounded-lg p-2";
 };
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const result = registerSchema.safeParse(myTask);
-    console.log(result,"RESULT")
-    if(result.success){
-      console.log("Result is success")
-   try {
-  console.log("Before API Call");
+async function handleSubmit(e) {
+  e.preventDefault();
 
-  const out = await registerUser(myTask);
+  const result = registerSchema.safeParse(myTask);
 
-  console.log("After API Call");
-  console.log("Hi", out);
+  if (result.success) {
+    try {
+      setLoading(true);
 
-  if (out.success) {
-    navigate("/gym/details");
-  }
-} catch (err) {
-  console.log("API Error:", err);
+      const out = await registerUser(myTask);
+
+   if (out.success) {
+  localStorage.setItem("token", out.token);
+
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      firstName: myTask.firstName,
+      lastName: myTask.lastName,
+    })
+  );
+
+  navigate("/gym/details");
 }
-    }else{
-      console.log("do it ")
+    } catch (err) {
+      console.log("API Error:", err);
+    } finally {
+      setLoading(false);
     }
+  } else {
+    const fieldErrors = {};
 
-  //   if (!result.success) {
-  //     console.log(result.error.format());
-  //     alert("Validation Failed");
-  //     return;
-  //   }
-  //   else{
-  //   try {
-  //     const out = await registerUser(myTask);
-  //     console.log("Hi", out)
-  //     if (out.success) {
-  //       alert("Navigating to Gym Details page");
-  //       navigate("/gym/details");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
+    result.error.issues.forEach((issue) => {
+      fieldErrors[issue.path[0]] = issue.message;
+    });
+
+    setErrors(fieldErrors);
+
+    const touchedFields = {};
+    Object.keys(myTask).forEach((key) => {
+      touchedFields[key] = true;
+    });
+
+    setTouched(touchedFields);
   }
+}
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10">
@@ -136,92 +144,151 @@ const getInputClass = (field) => {
         <form className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={myTask.firstName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={getInputClass("firstName")}
-              />
-              {touched.firstName && errors.firstName && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.firstName}
-                </p>
-              )}
-            </div>
+  <label
+    htmlFor="firstName"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    First Name
+  </label>
 
-            <div>
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={myTask.lastName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={getInputClass("lastName")}
-              />
-              {touched.lastName && errors.lastName && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.lastName}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <input
-              type="tel"
-              name="mobileNumber"
-              placeholder="Mobile Number"
-              value={myTask.mobileNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={getInputClass("mobileNumber")}
-            />
-            {touched.mobileNumber && errors.mobileNumber && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.mobileNumber}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <input
-              type="email"
-              name="enteredEmail"
-              placeholder="Email Address"
-              value={myTask.enteredEmail}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={getInputClass("enteredEmail")}
-            />
-            {touched.enteredEmail && errors.enteredEmail && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.enteredEmail}
-              </p>
-            )}
-          </div>
-
-          <div className="relative">
   <input
-    type={showPassword ? "text" : "password"}
-    name="enteredPassword"
-    placeholder="Password"
-    value={myTask.enteredPassword}
+    id="firstName"
+    type="text"
+    name="firstName"
+    placeholder="Enter your first name"
+    value={myTask.firstName}
     onChange={handleChange}
     onBlur={handleBlur}
-    className={`${getInputClass("enteredPassword")} pr-10`}
+    className={getInputClass("firstName")}
   />
 
-  <button
-    type="button"
-    onClick={() => setShowPassword(!showPassword)}
-    className="absolute right-3 top-3 text-gray-500"
+  {touched.firstName && errors.firstName && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.firstName}
+    </p>
+  )}
+</div>
+
+           <div>
+  <label
+    htmlFor="lastName"
+    className="block text-sm font-medium text-gray-700 mb-1"
   >
-    {showPassword ? <FaEyeSlash /> : <FaEye />}
-  </button>
+    Last Name
+  </label>
+
+  <input
+    id="lastName"
+    type="text"
+    name="lastName"
+    placeholder="Enter your last name"
+    value={myTask.lastName}
+    onChange={handleChange}
+    onBlur={handleBlur}
+    className={getInputClass("lastName")}
+  />
+
+  {touched.lastName && errors.lastName && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.lastName}
+    </p>
+  )}
+</div>
+          </div>
+
+        <div>
+  <label
+    htmlFor="mobileNumber"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Mobile Number
+  </label>
+
+  <PhoneInput
+    country={"in"}
+    value={myTask.mobileNumber}
+    onChange={(phone) =>
+      setMyTask({
+        ...myTask,
+        mobileNumber: phone,
+      })
+    }
+    inputStyle={{
+      width: "100%",
+      height: "42px",
+      borderRadius: "8px",
+      border: "1px solid #d1d5db",
+    }}
+    buttonStyle={{
+      borderTopLeftRadius: "8px",
+      borderBottomLeftRadius: "8px",
+    }}
+  />
+
+  {touched.mobileNumber && errors.mobileNumber && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.mobileNumber}
+    </p>
+  )}
+</div>
+
+  <div>
+
+  <label
+    htmlFor="enteredEmail"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Email Address
+  </label>
+
+
+  <input
+    id="enteredEmail"
+    type="email"
+    name="enteredEmail"
+    placeholder="Enter your email address"
+    value={myTask.enteredEmail}
+    onChange={handleChange}
+    onBlur={handleBlur}
+    className={getInputClass("enteredEmail")}
+  />
+
+  {touched.enteredEmail && errors.enteredEmail && (
+    <p className="text-red-500 text-sm mt-1">
+      {errors.enteredEmail}
+    </p>
+  )}
+</div>
+
+
+<div>
+  <label
+    htmlFor="enteredPassword"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Password
+  </label>
+
+  <div className="relative">
+    <input
+      id="enteredPassword"
+      type={showPassword ? "text" : "password"}
+      name="enteredPassword"
+      placeholder="Enter your password"
+      value={myTask.enteredPassword}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      className={`${getInputClass("enteredPassword")} pr-10`}
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+    >
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
 
   {touched.enteredPassword && errors.enteredPassword && (
     <p className="text-red-500 text-sm mt-1">
@@ -230,26 +297,36 @@ const getInputClass = (field) => {
   )}
 </div>
 
-  <div className="relative">
-  <input
-    type={showConfirmPassword ? "text" : "password"}
-    name="confirmPassword"
-    placeholder="Confirm Password"
-    value={myTask.confirmPassword}
-    onChange={handleChange}
-    onBlur={handleBlur}
-    className={`${getInputClass("confirmPassword")} pr-10`}
-  />
-
-  <button
-    type="button"
-    onClick={() =>
-      setShowConfirmPassword(!showConfirmPassword)
-    }
-    className="absolute right-3 top-3 text-gray-500"
+<div>
+  <label
+    htmlFor="confirmPassword"
+    className="block text-sm font-medium text-gray-700 mb-1"
   >
-    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-  </button>
+    Confirm Password
+  </label>
+
+  <div className="relative">
+    <input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      name="confirmPassword"
+      placeholder="Re-enter your password"
+      value={myTask.confirmPassword}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      className={`${getInputClass("confirmPassword")} pr-10`}
+    />
+
+    <button
+      type="button"
+      onClick={() =>
+        setShowConfirmPassword(!showConfirmPassword)
+      }
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+    >
+      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+    </button>
+  </div>
 
   {touched.confirmPassword && errors.confirmPassword && (
     <p className="text-red-500 text-sm mt-1">
@@ -258,50 +335,73 @@ const getInputClass = (field) => {
   )}
 </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={myTask.city}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={getInputClass("city")}
-              />
-              {touched.city && errors.city && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.city}
-                </p>
-              )}
-            </div>
+         <div className="grid grid-cols-2 gap-4">
+  {/* City */}
+  <div>
+    <label
+      htmlFor="city"
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
+      City
+    </label>
 
-            <div>
-              <input
-                type="text"
-                name="state"
-                placeholder="State"
-                value={myTask.state}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={getInputClass("state")}
-              />
-              {touched.state && errors.state && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.state}
-                </p>
-              )}
-            </div>
-          </div>
+    <input
+      id="city"
+      type="text"
+      name="city"
+      placeholder="Enter your city"
+      value={myTask.city}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      className={getInputClass("city")}
+    />
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
-          >
-            Next
-          </button>
+    {touched.city && errors.city && (
+      <p className="text-red-500 text-sm mt-1">
+        {errors.city}
+      </p>
+    )}
+  </div>
 
+  {/* State */}
+  <div>
+    <label
+      htmlFor="state"
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
+      State
+    </label>
+
+    <input
+      id="state"
+      type="text"
+      name="state"
+      placeholder="Enter your state"
+      value={myTask.state}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      className={getInputClass("state")}
+    />
+
+    {touched.state && errors.state && (
+      <p className="text-red-500 text-sm mt-1">
+        {errors.state}
+      </p>
+    )}
+  </div>
+</div>
+         <button
+  type="button"
+  onClick={handleSubmit}
+  disabled={loading}
+  className={`w-full py-3 rounded-lg text-white transition ${
+    loading
+      ? "bg-blue-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700"
+  }`}
+>
+  {loading ? "Loading..." : "Next"}
+</button>
         </form>
       </div>
     </div>
