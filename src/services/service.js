@@ -1,6 +1,7 @@
 import Axios from "axios";
 
-const API_URL = "http://localhost:7070";
+// const API_URL = "http://localhost:7070";
+const API_URL = "https://gym-backend-1kg1.onrender.com";
 
 // export const registerUser = async (userData) => {
 //   const response = await Axios.post(
@@ -55,7 +56,7 @@ export const loginOwner = async (ownerloginData) => {
 
 
 export const loginUser = async (userloginData) => {
-  const response = await Axios.post(`${API_URL}/owner/login`,userloginData);
+  const response = await Axios.post(`${API_URL}/user/login`,userloginData);
   return response.data;
 };
 
@@ -94,12 +95,17 @@ return response.data;
 
 
 export const checkEmail = async (email) => {
-  const response = await Axios.post(
-    `${API_URL}/auth/check-email`,
-    { email }
-  );
+  try {
+    const response = await Axios.post(
+      `${API_URL}/auth/check-email`,
+      { email }
+    );
 
-  return response.data;
+    return response.data;
+  } catch (err) {
+    console.log("checkEmail API failed:", err.response || err);
+    throw err;
+  }
 };
 
 export const googleLogin = async (userData) => {

@@ -2,10 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import {
-  checkEmail,
-  googleLogin,
-} from "../../services/service";
+import { checkEmail, googleLogin } from "../../services/service";
 
 function UserLogin() {
   const navigate = useNavigate();
@@ -15,50 +12,55 @@ function UserLogin() {
   const [loading, setLoading] = useState(false);
 
   // Check Email
-  const handleEmailSubmit = async () => {
-    if (!email.trim()) {
-      alert("Please enter your email");
-      return;
+const handleEmailSubmit = async () => {
+  console.log("clicked emial")
+  console.log("EMAIL STATE:", email);
+console.log("TRIMMED:", email.trim());
+  const trimmedEmail = email.trim();
+
+  if (!trimmedEmail) {
+    alert("Please enter your email");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const data = await checkEmail(trimmedEmail);
+
+    // SAFETY CHECK (IMPORTANT)
+    if (!data) {
+      throw new Error("No response from server");
     }
 
-    try {
-      setLoading(true);
+    if (data.exists) {
+      localStorage.setItem("token", data.token);
 
-      const data = await checkEmail(email);
-
-      if (data.exists) {
-        localStorage.setItem("token", data.token);
-
-        if (data.user) {
-          localStorage.setItem(
-            "user",
-            JSON.stringify(data.user)
-          );
-        }
-
-        alert("Login Successful");
-        navigate("/user/dashboard");
-      } else {
-        setShowGoogleLogin(true);
+      if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
       }
-    } catch (error) {
-  console.log("FULL ERROR:", error);
-  console.log("MESSAGE:", error.message);
-  console.log("RESPONSE:", error.response);
-  console.log("REQUEST:", error.request);
-}
-  };
 
+      alert("Login Successful");
+      navigate("/user/dashboard");
+    } else {
+      setShowGoogleLogin(true);
+    }
+
+  } catch (error) {
+    console.log("API ERROR:", error?.response || error);
+
+    // IMPORTANT FIX
+    setShowGoogleLogin(true); // fallback so user is not stuck
+
+    alert("Backend error. Try Google login or check server.");
+  } finally {
+    setLoading(false);
+  }
+};
   // Google Login
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const decoded = jwtDecode(
-        credentialResponse.credential
-      );
-
-      console.log("Google User:", decoded);
-
-     
+      const decoded = jwtDecode(credentialResponse.credential);
 
       const data = await googleLogin({
         googleId: decoded.sub,
@@ -67,20 +69,15 @@ function UserLogin() {
         picture: decoded.picture,
       });
 
-      if (data.success) {
+      if (data?.success) {
         localStorage.setItem("token", data.token);
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(data.user)
-        );
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         alert("Login Successful");
-
         navigate("/user/dashboard");
       }
     } catch (error) {
-      console.error(error);
+      console.log("Google Login Error:", error);
       alert("Google Login Failed");
     }
   };
@@ -88,6 +85,7 @@ function UserLogin() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 to-indigo-100 flex items-center justify-center px-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
+        
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
           User Login
         </h1>
@@ -96,6 +94,7 @@ function UserLogin() {
           Enter your email to continue
         </p>
 
+        {/* INPUT */}
         <input
           type="email"
           placeholder="Enter Email Address"
@@ -104,6 +103,7 @@ function UserLogin() {
           className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
+        {/* BUTTON */}
         {!showGoogleLogin ? (
           <button
             onClick={handleEmailSubmit}
@@ -121,9 +121,7 @@ function UserLogin() {
             <div className="flex justify-center">
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
-                onError={() =>
-                  alert("Google Login Failed")
-                }
+                onError={() => alert("Google Login Failed")}
               />
             </div>
           </div>
