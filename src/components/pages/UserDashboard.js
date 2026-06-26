@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import "../../assets/styles/UserDashboard.css";
+import Sidebar from "./Sidebar";
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -11,17 +13,16 @@ export default function UserDashboard() {
   };
 
   return (
-   <div className="dashboard-header">
-  <div className="row h-100 align-items-center">
-    <div className="col-3"></div>
+   <>
+    <div className="dashboard-header">
+      <div className="header-left"></div>
 
-    <div className="col-6 text-center">
+
       <h1 className="welcome-text">
-        Welcome, {user?.name} 👋
+        Welcome, {user?.name}
       </h1>
-    </div>
 
-    <div className="col-3 text-end pe-4">
+      {/* Logout */}
       <button
         className="btn btn-light rounded-pill logout-btn"
         onClick={handleLogout}
@@ -30,7 +31,7 @@ export default function UserDashboard() {
         Logout
       </button>
     </div>
-  </div>
-</div>
+    <Sidebar/>
+   </>
   );
 }
