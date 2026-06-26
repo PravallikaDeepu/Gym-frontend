@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginOwner } from "../../services/service";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 function OwnerLogin() {
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -62,14 +64,25 @@ async function handleSubmit(e) {
           />
 
           <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={loginData.password}
-            onChange={handleChange}
-            placeholder="Enter Password"
-            className="w-full border p-2 rounded mb-4"
-          />
+
+<div className="relative mb-4">
+  <input
+    type={showPassword ? "text" : "password"}
+    name="password"
+    value={loginData.password}
+    onChange={handleChange}
+    placeholder="Enter Password"
+    className="w-full border p-2 rounded pr-10"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </button>
+</div>
 
           <button
             type="submit"

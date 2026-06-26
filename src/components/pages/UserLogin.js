@@ -11,7 +11,7 @@ function UserLogin() {
   const [showGoogleLogin, setShowGoogleLogin] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Check Email
+
 const handleEmailSubmit = async () => {
   console.log("clicked emial")
   console.log("EMAIL STATE:", email);
@@ -50,7 +50,7 @@ console.log("TRIMMED:", email.trim());
     console.log("API ERROR:", error?.response || error);
 
     // IMPORTANT FIX
-    setShowGoogleLogin(true); // fallback so user is not stuck
+    setShowGoogleLogin(true); 
 
     alert("Backend error. Try Google login or check server.");
   } finally {
@@ -95,13 +95,19 @@ console.log("TRIMMED:", email.trim());
         </p>
 
         {/* INPUT */}
-        <input
-          type="email"
-          placeholder="Enter Email Address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+       <input
+  type="email"
+  placeholder="Enter Email Address"
+  value={email}
+  onChange={(e) => setEmail(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleEmailSubmit();
+    }
+  }}
+  className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+/>
 
         {/* BUTTON */}
         {!showGoogleLogin ? (

@@ -364,7 +364,7 @@ if (!result.success) {
 
   <div>
     <label className="block font-medium mb-2">
-      Gym Photos (Multiple Upload)
+      Gym Photos 
     </label>
 
     <input
