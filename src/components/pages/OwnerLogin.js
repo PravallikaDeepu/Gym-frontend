@@ -22,17 +22,14 @@ function OwnerLogin() {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  console.log("Login Data:", loginData);
-
   try {
     const out = await loginOwner(loginData);
 
-    console.log(out.message, "LOGIN RESPONSE");
-
     if (out.success) {
-      alert("Login Successful 😊");
-
-      navigate("/owner/dashboard"); 
+      localStorage.setItem("token", out.token);
+      localStorage.setItem("user", JSON.stringify(out.user));
+      alert("Login Successful");
+      navigate("/owner/dashboard");
     }
   } catch (err) {
     console.log(err);
@@ -41,7 +38,8 @@ async function handleSubmit(e) {
       err.response?.data?.message ||
       "Login Failed"
     );
-    navigate("/register")
+
+    navigate("/register");
   }
 }
 

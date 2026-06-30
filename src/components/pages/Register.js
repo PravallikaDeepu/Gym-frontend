@@ -4,7 +4,9 @@ import { registerSchema } from "../../schemas/schema";
 import { registerUser } from "../../services/service";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import PhoneInput from "react-phone-input-2";
+import ProgressBar from "./ProgressBar";
 import "react-phone-input-2/lib/style.css";
+import Header from "../layouts/Header";
 
 function Register() {
   const navigate = useNavigate();
@@ -135,6 +137,9 @@ async function handleSubmit(e) {
 }
 
   return (
+    <>
+    <Header/>
+
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8">
         <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">
@@ -405,6 +410,7 @@ async function handleSubmit(e) {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

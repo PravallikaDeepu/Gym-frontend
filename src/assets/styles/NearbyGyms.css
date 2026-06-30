@@ -1,0 +1,82 @@
+.nearby-section{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.nearby-header{
+    margin-bottom:20px;
+}
+
+.gym-card{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-bottom:18px;
+
+    padding-bottom:18px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.gym-card img{
+
+    width:110px;
+
+    height:90px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+}
+
+.gym-info{
+
+    flex:1;
+
+}
+
+.gym-info h4{
+
+    margin-bottom:8px;
+
+}
+
+.gym-info p{
+
+    margin:5px 0;
+
+    color:#555;
+
+}
+
+.star{
+
+    color:orange;
+
+    margin-right:5px;
+
+}
+
+.gym-info button{
+
+    margin-top:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}

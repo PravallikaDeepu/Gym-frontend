@@ -1,37 +1,62 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import "../../assets/styles/UserDashboard.css";
+
 import Sidebar from "./Sidebar";
+import TopActions from "./TopActions";
+import MembershipOverview from "./MembershipOverview";
+import NearbyGyms from "./NearbyGyms";
+import RecentCheckins from "./RecentCheckins";
+import HealthSummary from "./HealthSummary";
+// import Footer from "./Footer";
 
 export default function UserDashboard() {
-  const navigate = useNavigate();
+
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/user/login");
-  };
-
   return (
-   <>
-    <div className="dashboard-header">
-      <div className="header-left"></div>
+    <div className="dashboard-container">
 
+      <Sidebar />
 
-      <h1 className="welcome-text">
-        Welcome, {user?.name}
-      </h1>
+      <div className="dashboard-main">
 
-      {/* Logout */}
-      <button
-        className="btn btn-light rounded-pill logout-btn"
-        onClick={handleLogout}
-      >
-        <i className="bi bi-box-arrow-right me-2"></i>
-        Logout
-      </button>
+        {/* Header */}
+        <div className="dashboard-header">
+          <h1 className="welcome-text">
+            Welcome, {user?.name}
+          </h1>
+        </div>
+
+        {/* Search + Quick Actions */}
+        <TopActions />
+
+        {/* Main Content */}
+        <div className="dashboard-content">
+
+          {/* Left Column */}
+          <div className="left-column">
+
+            <MembershipOverview />
+
+            <RecentCheckins />
+
+          </div>
+
+          {/* Right Column */}
+          <div className="right-column">
+
+             <NearbyGyms />
+           <HealthSummary />
+
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        {/* <Footer /> */}
+
+      </div>
+
     </div>
-    <Sidebar/>
-   </>
   );
 }

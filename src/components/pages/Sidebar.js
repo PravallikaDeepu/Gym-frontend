@@ -1,44 +1,59 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import "../../assets/styles/UserDashboard.css";
+import { NavLink } from "react-router-dom";
+import {
+  FaHome,
+  FaSearch,
+  FaDumbbell,
+  FaChartLine,
+  FaUser,
+  FaMoneyBill,
+  FaCog,
+} from "react-icons/fa";
+
 
 export default function Sidebar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const menuItems = [
-    { name: "Home", path: "/user/home" },
-    { name: "My Gym", path: "/user/gym" },
-    { name: "Membership Plans", path: "/user/plans" },
-    { name: "BMI Tracker", path: "/user/bmi" },
-    { name: "Payments", path: "/user/payments" },
-    { name: "Settings", path: "/user/settings" },
-  ];
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/user/login");
-  };
-
   return (
     <div className="sidebar">
-      <h2 className="logo">🏋️ GymApp</h2>
+      {/* Logo */}
+      <div className="logo">
+        <span className="logo-icon">🏋️</span>
+        <h2>GymApp</h2>
+      </div>
 
-      <ul className="menu">
-        {menuItems.map((item, index) => (
-          <li
-            key={index}
-            className={location.pathname === item.path ? "active" : ""}
-            onClick={() => navigate(item.path)}
-          >
-            {item.name}
-          </li>
-        ))}
-      </ul>
+      {/* Menu */}
+      <nav className="menu">
+        <NavLink to="/home" className="menu-item">
+          <FaHome /> <span>Home</span>
+        </NavLink>
 
-      <button className="logout-btn" onClick={handleLogout}>
-        Logout
-      </button>
+        <NavLink to="/explore" className="menu-item">
+          <FaSearch /> <span>Explore Gyms</span>
+        </NavLink>
+
+        <NavLink to="/plans" className="menu-item">
+          <FaDumbbell /> <span>Membership Plans</span>
+        </NavLink>
+
+        <NavLink to="/bmi" className="menu-item">
+          <FaChartLine /> <span>BMI Tracker</span>
+        </NavLink>
+
+        <NavLink to="/profile" className="menu-item">
+          <FaUser /> <span>Profile</span>
+        </NavLink>
+
+        <NavLink to="/payments" className="menu-item">
+          <FaMoneyBill /> <span>Payments</span>
+        </NavLink>
+
+        <NavLink to="/settings" className="menu-item">
+          <FaCog /> <span>Settings</span>
+        </NavLink>
+      </nav>
+
+      {/* Logout */}
+      <div className="logout">
+        <button>Logout</button>
+      </div>
     </div>
   );
 }

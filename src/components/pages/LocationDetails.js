@@ -18,6 +18,7 @@ function LocationDetails() {
     state: "",
     pincode: "",
     country: "India",
+    googleMapsLink: ""
   });
 
   // ✅ HANDLE CHANGE
@@ -208,6 +209,34 @@ function LocationDetails() {
 
             </div>
 
+{/* Google map */}
+<div>
+  <label className="block font-medium mb-2">
+    Google Maps Location
+  </label>
+
+ <input
+  type="url"
+  name="googleMapsLink"
+  placeholder="Paste your Google Maps location link"
+  value={locationData.googleMapsLink}
+  onChange={handleChange}
+  className={getInputClass("googleMapsLink")}
+/>
+<p className="text-sm text-gray-500 mt-1">
+  Open Google Maps → Find your gym → Share → Copy link → Paste it here.
+</p>
+{locationData.googleMapsLink && (
+  <a
+    href={locationData.googleMapsLink}
+    target="_blank"
+    rel="noreferrer"
+    className="text-blue-600 underline"
+  >
+    View on Google Maps
+  </a>
+)}
+</div>
             {/* BUTTON */}
             <button
               type="submit"

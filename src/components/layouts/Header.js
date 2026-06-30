@@ -1,8 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
+import { useState } from "react";
+import "../../assets/styles/Header.css";
 
 function Header() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -11,29 +15,55 @@ function Header() {
   };
 
   return (
-    <header className="w-full bg-white shadow-md px-6 py-4 flex items-center justify-between">
+    <header className="header-container">
       
       {/* Left - Logo */}
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-blue-600 rounded-full"></div>
-        <h2 className="text-blue-600 font-bold text-lg">Gym Manager</h2>
+      <div className="logo-section">
+        <div className="logo-circle"></div>
+        <h2>GymApp</h2>
       </div>
 
       {/* Center - Welcome */}
-      <h2 className="text-gray-700 font-bold">
-        Welcome,{" "}
-        <span className="text-blue-600 font-semibold">
-          {user?.firstName} {user?.lastName}
-        </span>
-      </h2>
+      <div className="welcome-section">
+        <h2>
+          Welcome back,{" "}
+          <span>
+            {user?.firstName} {user?.lastName}
+          </span> 👋
+        </h2>
+        <p>Manage your fitness journey with ease.</p>
+      </div>
 
-      {/* Right - Logout */}
-      <button
-        onClick={handleLogout}
-        className="text-red-500 font-medium flex items-center gap-2"
-      >
-        Logout
-      </button>
+      {/* Right - Actions */}
+      <div className="right-section">
+
+        {/* Notification */}
+        <div className="bell">
+          <FaBell />
+          <span className="badge">3</span>
+        </div>
+
+        {/* Profile */}
+        <div
+          className="profile"
+          onClick={() => setShowDropdown(!showDropdown)}
+        >
+          <div className="avatar">
+            {user?.firstName?.charAt(0)}
+          </div>
+          <span>
+            {user?.firstName}
+          </span>
+        </div>
+
+        {/* Dropdown */}
+        {showDropdown && (
+          <div className="dropdown">
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        )}
+
+      </div>
     </header>
   );
 }

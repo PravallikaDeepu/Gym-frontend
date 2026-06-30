@@ -62,24 +62,28 @@ export const registerSchema = z
 export const basicGymSchema = z.object({
   gymName: z
     .string()
-    .min(3, "Gym name must be at least 3 characters")
-    .max(50, "Gym name cannot exceed 50 characters"),
+    .min(3, "Gym name must be at least 3 characters"),
 
   establishmentYear: z
-    .coerce
-    .number()
-    .min(1900, "Enter a valid year")
-    .max(new Date().getFullYear(), "Year cannot be in the future"),
+    .string()
+    .min(4, "Enter establishment year")
+    .refine(
+      (val) =>
+        Number(val) >= 1900 &&
+        Number(val) <= new Date().getFullYear(),
+      {
+        message: "Enter a valid establishment year",
+      }
+    ),
 
   gymType: z
     .string()
-    .min(1, "Please select a gym type")
-    .max(30, "Gym type is too long"),
+    .min(1, "Please select a gym type"),
 
   gymDescription: z
     .string()
-    .min(20, "Gym description must be at least 20 characters")
-    .max(500, "Gym description cannot exceed 500 characters"),
+    .min(20, "Description should be at least 20 characters"),
+
 });
 
 
@@ -165,6 +169,18 @@ export const locationDetailsSchema = z.object({
     .string()
     .min(2, "Country is required")
     .max(15, "Country cannot exceed 50 characters"),
+
+      googleMapsLink: z
+  .string()
+  .url("Please enter a valid URL")
+  .refine(
+    (url) =>
+      url.includes("google.com/maps") ||
+      url.includes("maps.app.goo.gl"),
+    {
+      message: "Please paste a valid Google Maps link",
+    }
+  ),
 });
 
 

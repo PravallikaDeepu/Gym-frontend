@@ -1,0 +1,65 @@
+.health-summary{
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.health-header{
+    margin-bottom:20px;
+}
+
+.health-header h3{
+    font-size:22px;
+}
+
+.health-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.health-card{
+    border-radius:15px;
+    padding:18px;
+    color:#fff;
+    text-align:center;
+}
+
+.health-icon{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.health-card h4{
+    margin:8px 0;
+}
+
+.health-card p{
+    font-size:28px;
+    font-weight:bold;
+    margin:8px 0;
+}
+
+.health-card span{
+    font-size:14px;
+    opacity:.9;
+}
+
+/* Colors */
+
+.bmi{
+    background:#2563eb;
+}
+
+.weight{
+    background:#10b981;
+}
+
+.calories{
+    background:#f59e0b;
+}
+
+.workout{
+    background:#8b5cf6;
+}

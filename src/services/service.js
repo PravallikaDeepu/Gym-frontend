@@ -1,7 +1,7 @@
 import Axios from "axios";
 
-// const API_URL = "http://localhost:7070";
-const API_URL = "https://gym-backend-1kg1.onrender.com";
+const API_URL = "http://localhost:7070";
+// const API_URL = "https://gym-backend-1kg1.onrender.com";
 
 // export const registerUser = async (userData) => {
 //   const response = await Axios.post(
@@ -33,6 +33,7 @@ export const ownerRegister = async (ownerData) => {
 
   return response.data;
 };
+
 
 export const operatingDetails = async(operatingData) => {
   const response = await Axios.post(`${API_URL}/operating/details`, {message:operatingData})
@@ -74,8 +75,6 @@ return response.data;
 };
 
 
-
-
 export const verifyOTP = async(email,otp)=>{
 
 
@@ -91,7 +90,6 @@ const response = await Axios.post(
 return response.data;
 
 };
-
 
 
 export const checkEmail = async (email) => {

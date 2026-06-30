@@ -9,6 +9,7 @@ import OwnerLogin from "../src/components/pages/OwnerLogin";
 import OwnerDashboard from './components/pages/OwnerDashboard';
 import UserLogin from './components/pages/UserLogin';
 import UserDashboard from './components/pages/UserDashboard';
+import ExploreGym from './components/pages/ExploreGym';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
       <Route path='/owner/dashboard' element={<OwnerDashboard/>}></Route>
       <Route path='/user/login' element={<UserLogin/>}></Route>
       <Route path='/user/dashboard' element={<UserDashboard/>}></Route>
+      <Route path='/explore/gym' element={<ExploreGym/>}></Route>
     </Routes>
    
    </BrowserRouter>
